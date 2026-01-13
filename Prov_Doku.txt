@@ -1,8 +1,3 @@
-Selbstverständlich. Hier ist die vollständige technische Dokumentation des Projekts **"LabZeal"**.
-
-Diese Zusammenfassung deckt alle Änderungen am Quellcode, am Build-System und an der Paketstruktur ab, die notwendig waren, um Zeal in eine wartungsarme Labor-Version (Qt 5 Basis) zu verwandeln und die "Dependency Hell" mit Qt 6 zu umgehen.
-
----
 
 ### 1. Quellcode-Modifikationen (C++)
 
@@ -178,12 +173,8 @@ dpkg-deb --build python-labzeal
 ```
 
 
-4. **Installation testen (Lokale Abhängigkeit auflösen):**
+4. **Installation testen:**
 ```bash
 sudo apt install ./*.deb
 
 ```
-
-
-
-Damit hast du ein reproduzierbares System, das gegen stabile Qt 5 Bibliotheken läuft und immun gegen versehentliche Manipulation durch Studenten ist.s
