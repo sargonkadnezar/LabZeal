@@ -1,0 +1,8 @@
+@import url("classic.css");
+
+div.related {display:none}
+a.headerlink {display:none}
+div.related h3 {display:none}
+.sphinxsidebar {display:none !important}
+div.body {padding-left:0px !important; max-width:none !important} #sidebar {display:none} div.bodywrapper {margin:0 0 0 0px} .mobile-nav {display:none !important} html { scroll-padding-top: 0px !important; } .document {padding-top:0px !important; position:static !important}
+

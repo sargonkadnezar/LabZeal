@@ -1,0 +1,12 @@
+0764d28630c6d86a578fddd05ad2bfb5  usr/bin/zeal
+500cc452f6565def6a3eb99691c806b5  usr/share/applications/org.zealdocs.zeal.desktop
+f4e188030f7959e9a903415090f85680  usr/share/doc/zeal/README.md
+624640573a0007b490f8fbc8f0d34268  usr/share/doc/zeal/changelog.Debian.gz
+9124d0ed8a7545889481073c31837a30  usr/share/doc/zeal/copyright
+f340d0faffd50ebb7cb25d422af917f4  usr/share/icons/hicolor/128x128/apps/zeal.png
+2df04356ac24c033173f4b39b958535a  usr/share/icons/hicolor/16x16/apps/zeal.png
+adfbd9c04eb3cfb7717623a319d40b37  usr/share/icons/hicolor/24x24/apps/zeal.png
+8b5cb92f43abd63ec2da946d33a38645  usr/share/icons/hicolor/32x32/apps/zeal.png
+463b7b3f51be4850ab3fe67cdaee45e1  usr/share/icons/hicolor/64x64/apps/zeal.png
+86c417acdb8b54de81f98e314d81461c  usr/share/man/man1/zeal.1.gz
+812995249e21080314651cc04e6dd413  usr/share/metainfo/org.zealdocs.zeal.appdata.xml
