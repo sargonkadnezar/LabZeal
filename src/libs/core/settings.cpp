@@ -90,7 +90,8 @@ void Settings::load()
 
     // TODO: Put everything in groups
     startMinimized = settings->value(QStringLiteral("start_minimized"), false).toBool();
-    checkForUpdate = settings->value(QStringLiteral("check_for_update"), true).toBool();
+   // Updates deaktiviert
+    checkForUpdate = false;
 
     showSystrayIcon = settings->value(QStringLiteral("show_systray_icon"), true).toBool();
     minimizeToSystray = settings->value(QStringLiteral("minimize_to_systray"), false).toBool();
@@ -183,18 +184,10 @@ void Settings::load()
     isIgnoreSslErrorsEnabled = settings->value(QStringLiteral("ignore_ssl_errors"), false).toBool();
     settings->endGroup();
 
-    settings->beginGroup(GroupDocsets);
-    if (settings->contains(QStringLiteral("path"))) {
-        docsetPath = settings->value(QStringLiteral("path")).toString();
-    } else {
-#ifndef PORTABLE_BUILD
-        docsetPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
-                + QLatin1String("/docsets");
-#else
-        docsetPath = QStringLiteral("docsets");
-#endif
-    }
-    settings->endGroup();
+   settings->beginGroup(GroupDocsets);
+        // Aktuell hardcoded filepath
+        docsetPath = QStringLiteral("/usr/share/labzeal/docsets");
+        settings->endGroup();
 
     // Create the docset storage directory if it doesn't exist.
     const QFileInfo fi(docsetPath);

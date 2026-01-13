@@ -24,15 +24,15 @@ set(PROJECT_COMPANY_NAME "Oleg Shparber")
 set(PROJECT_COPYRIGHT "© 2013-2025 Oleg Shparber and other contributors")
 
 # Find available major Qt version. It will be stored in QT_VERSION_MAJOR.
-if(NOT ZEAL_USE_QT5)
-    find_package(QT NAMES Qt6 COMPONENTS Core)
-    set(QT_MINIMUM_VERSION 6.2.0)
-endif()
-
-if(NOT QT_FOUND)
-    find_package(QT NAMES Qt5 REQUIRED COMPONENTS Core)
-    set(QT_MINIMUM_VERSION 5.15.2)
-endif()
+# HARD FORCE LABZEAL TO QT5
+set(QT_VERSION_MAJOR 5)
+set(Qt6_FOUND FALSE)
+# if(NOT QT_VERSION_MAJOR)
+#     find_package(Qt6 COMPONENTS Core QUIET)
+#     if(Qt6_FOUND)
+#         set(QT_VERSION_MAJOR 6)
+#     endif()
+# endif()
 
 message(NOTICE "Detected Qt version: ${QT_VERSION}")
 

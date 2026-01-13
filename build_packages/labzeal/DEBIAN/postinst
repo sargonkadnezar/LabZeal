@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+
+if [ "$1" = "configure" ]; then
+    
+    if [ ! -d "/usr/share/labzeal/docsets" ]; then
+        mkdir -p /usr/share/labzeal/docsets
+    fi
+    chown -R root:root /usr/share/labzeal
+    chmod -R 755 /usr/share/labzeal
+fi
+
+exit 0

@@ -1,0 +1,189 @@
+Selbstverständlich. Hier ist die vollständige technische Dokumentation des Projekts **"LabZeal"**.
+
+Diese Zusammenfassung deckt alle Änderungen am Quellcode, am Build-System und an der Paketstruktur ab, die notwendig waren, um Zeal in eine wartungsarme Labor-Version (Qt 5 Basis) zu verwandeln und die "Dependency Hell" mit Qt 6 zu umgehen.
+
+---
+
+### 1. Quellcode-Modifikationen (C++)
+
+Ziel: Updates deaktivieren und einen festen, geteilten Pfad erzwingen.
+
+**Datei:** `src/libs/core/settings.cpp`
+**Funktion:** `void Settings::load()`
+
+* **Automatische Updates deaktivieren** (ca. Zeile 90-100):
+Um Netzwerkverkehr und Fehlermeldungen wegen fehlender Schreibrechte zu verhindern.
+```cpp
+// VORHER:
+// checkForUpdate = settings->value(QStringLiteral("check_for_update"), true).toBool();
+
+// NACHHER (LabZeal):
+checkForUpdate = false;
+
+```
+
+
+* **Docset-Pfad erzwingen** (ca. Zeile 200-215):
+Um benutzerspezifische Pfade zu ignorieren und den zentralen Systempfad zu nutzen.
+```cpp
+// VORHER:
+// Logik mit QStandardPaths::AppLocalDataLocation ...
+
+// NACHHER (LabZeal):
+settings->beginGroup(GroupDocsets);
+docsetPath = QStringLiteral("/usr/share/labzeal/docsets");
+settings->endGroup();
+
+```
+
+
+
+---
+
+### 2. Build-System Modifikationen (CMake)
+
+Ziel: Qt 5 erzwingen, um Abhängigkeitskonflikte (Qt 6.8 vs. Qt 6.9 ABI) zu lösen.
+
+**Datei:** `CMakeLists.txt` (im Root-Verzeichnis)
+
+* **Qt 6 Suche deaktivieren & Qt 5 setzen** (ca. Zeile 20-40):
+Wir verhindern, dass CMake die installierte (aber unvollständige) Qt 6 Version findet.
+```cmake
+# VORHER:
+# if(NOT QT_VERSION_MAJOR)
+#     find_package(Qt6 COMPONENTS Core QUIET)
+# ...
+
+# NACHHER (LabZeal):
+# (Qt6 Block auskommentiert oder gelöscht)
+set(QT_VERSION_MAJOR 5)
+
+```
+
+
+
+---
+
+### 3. Paket-Struktur und Control-Dateien
+
+Wir haben das Projekt in zwei Debian-Pakete aufgeteilt: **Core** (Programm) und **Content** (Daten).
+
+#### Paket A: `labzeal` (Das Programm)
+
+* **Pfad:** `build_packages/labzeal`
+* **Inhalt:** Das Binary (`usr/bin/labzeal`).
+
+**Datei:** `DEBIAN/control`
+Wichtig: Abhängigkeiten explizit auf Qt 5 Bibliotheken gesetzt, um Konflikte mit `qt6-base-private-abi` zu vermeiden.
+
+```ini
+Package: labzeal
+Version: 1.0.0
+Section: devel
+Priority: optional
+Architecture: amd64
+Depends: libc6, libgcc1, libqt5core5a, libqt5gui5, libqt5widgets5, libqt5webengine5, libqt5network5, libstdc++6
+Maintainer: Dein Name <email@uni-graz.at>
+Description: LabZeal Core Application (Qt5)
+ Modifizierte Zeal Version fuer Laboreinsatz.
+ Shared Path forced to /usr/share/labzeal/docsets.
+
+```
+
+**Datei:** `DEBIAN/postinst` (chmod +x nicht vergessen!)
+Aufgabe: Erstellen des Shared-Ordners und Setzen der Rechte (Root darf schreiben, User nur lesen).
+
+```bash
+#!/bin/sh
+set -e
+if [ "$1" = "configure" ]; then
+    if [ ! -d "/usr/share/labzeal/docsets" ]; then
+        mkdir -p /usr/share/labzeal/docsets
+    fi
+    chown -R root:root /usr/share/labzeal
+    chmod -R 755 /usr/share/labzeal
+fi
+exit 0
+
+```
+
+#### Paket B: `python-labzeal` (Der Inhalt)
+
+* **Pfad:** `build_packages/python-labzeal`
+* **Inhalt:** Das entpackte Docset (`usr/share/labzeal/docsets/Python_3.docset`).
+
+**Datei:** `DEBIAN/control`
+Wichtig: Hängt von `labzeal` ab, damit das Programm automatisch mitinstalliert wird.
+
+```ini
+Package: python-labzeal
+Version: 1.0.0
+Section: doc
+Priority: optional
+Architecture: all
+Depends: labzeal
+Maintainer: Dein Name <email@uni-graz.at>
+Description: Python 3 Documentation for LabZeal
+ Installs Python 3 docsets into the shared LabZeal path.
+
+```
+
+**Datei:** `DEBIAN/postinst` (chmod +x nicht vergessen!)
+Aufgabe: Sicherstellen, dass die neuen Daten für alle lesbar sind (`a+rX`).
+
+```bash
+#!/bin/sh
+set -e
+if [ "$1" = "configure" ]; then
+    DOCSET_PATH="/usr/share/labzeal/docsets/Python_3.docset"
+    if [ -d "$DOCSET_PATH" ]; then
+        chown -R root:root "$DOCSET_PATH"
+        chmod -R a+rX "$DOCSET_PATH"
+    fi
+fi
+exit 0
+
+```
+
+---
+
+### 4. Workflow zur Erstellung (Zusammenfassung)
+
+Dies ist der Prozess, den du durchlaufen musst, wenn du Änderungen vornimmst:
+
+1. **Clean Build & Kompilieren (Qt 5):**
+```bash
+cd ~/LabZeal/build
+rm -rf * # WICHTIG: Cache löschen
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make -j$(nproc)
+
+```
+
+
+2. **Binary kopieren:**
+```bash
+cp ~/LabZeal/build/bin/zeal ~/LabZeal/build_packages/labzeal/usr/bin/labzeal
+
+```
+
+
+3. **Pakete bauen:**
+```bash
+cd ~/LabZeal/build_packages
+rm *.deb
+dpkg-deb --build labzeal
+dpkg-deb --build python-labzeal
+
+```
+
+
+4. **Installation testen (Lokale Abhängigkeit auflösen):**
+```bash
+sudo apt install ./*.deb
+
+```
+
+
+
+Damit hast du ein reproduzierbares System, das gegen stabile Qt 5 Bibliotheken läuft und immun gegen versehentliche Manipulation durch Studenten ist.s
