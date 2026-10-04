@@ -113,6 +113,11 @@ SettingsDialog::SettingsDialog(QWidget *parent)
     });
 
     loadSettings();
+
+    // LabZeal lockdown: prevent changing docset path and update check in lab environments.
+    ui->docsetStorageEdit->setReadOnly(true);
+    ui->docsetStorageBrowseButton->setVisible(false);
+    ui->checkForUpdateCheckBox->setVisible(false);
 }
 
 SettingsDialog::~SettingsDialog()

@@ -47,9 +47,9 @@ MainWindow::MainWindow(Core::Application *app, QWidget *parent)
     , m_settings(app->settings())
 {
 #ifndef PORTABLE_BUILD
-    setWindowTitle(tr("Zeal"));
+    setWindowTitle(tr("LabZeal"));
 #else
-    setWindowTitle(tr("Zeal Portable"));
+    setWindowTitle(tr("LabZeal Portable"));
 #endif
     resize(900, 600); // Default size. May be overridden by restoreGeometry.
 
@@ -251,9 +251,9 @@ BrowserTab *MainWindow::tabAt(int index) const
 void MainWindow::updateWindowTitle(const QString &pageTitle)
 {
 #ifndef PORTABLE_BUILD
-    const auto appName = QStringLiteral("Zeal");
+    const auto appName = QStringLiteral("LabZeal");
 #else
-    const auto appName = QStringLiteral("Zeal Portable");
+    const auto appName = QStringLiteral("LabZeal Portable");
 #endif
 
     // Suppress the " - " separator when the page has no title.
@@ -461,17 +461,14 @@ void MainWindow::setupMainMenu()
         QDesktopServices::openUrl(QUrl(QStringLiteral("https://go.zealdocs.org/l/report-bug")));
     });
 
-    // -> Check for Updates Action.
-    menu->addAction(tr("&Check for Updates…"), this, [this]() {
-        m_application->checkForUpdates();
-    });
+    // NOTE: "Check for Updates" intentionally removed for LabZeal lab deployment.
 
     menu->addSeparator();
 
     // -> About Action.
     action = menu->addAction(IconHelper::fromTheme(QStringLiteral("help-about"),
                                                    QStringLiteral(":/icons/tabler/info-circle.svg")),
-                             tr("&About Zeal"),
+                             tr("&About LabZeal"),
                              this,
                              [this]() {
         AboutDialog dialog(this);

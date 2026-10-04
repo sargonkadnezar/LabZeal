@@ -1,11 +1,7 @@
 find_package(Qt6 6.4.2 COMPONENTS Concurrent Svg WebEngineWidgets Widgets REQUIRED)
 
 # Define output binary name.
-if(APPLE)
-    set(_project_output_name ${CMAKE_PROJECT_NAME})
-else()
-    string(TOLOWER ${CMAKE_PROJECT_NAME} _project_output_name)
-endif()
+set(_project_output_name "labzeal")
 
 set(PROJECT_EXECUTABLE_NAME "${_project_output_name}${CMAKE_EXECUTABLE_SUFFIX}")
 message(STATUS "Project executable name: ${PROJECT_EXECUTABLE_NAME}")

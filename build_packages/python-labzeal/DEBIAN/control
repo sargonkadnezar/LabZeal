@@ -1,0 +1,9 @@
+Package: python-labzeal
+Version: 1.0.0
+Section: doc
+Priority: optional
+Architecture: all
+Depends: labzeal
+Maintainer: Alexander Tieber <jungewas40@gmail.com>
+Description: Python 3 Documentation for LabZeal
+ Installs Python 3 docsets into the shared LabZeal path.

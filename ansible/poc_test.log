@@ -1,0 +1,76 @@
+==> PoC-Testroot : /tmp/labzeal-poc.MI7JgT
+==> Repo-Root    : /home/alex/LabZeal
+==> Test-Pakete bauen...
+     labzeal_1.0.0_amd64.deb
+     labzeal-all_1.0.0_all.deb
+labzeal-docset-python-3_1.0.0_amd64.deb
+
+==> deploy_local_gpg.sh (echtes Skript, Staging-Pfade, sudo-Stub)...
+PASS: deploy_local_gpg.sh laeuft vollstaendig durch
+       -> Public Key: /tmp/labzeal-poc.MI7JgT/www/labzeal-pubkey.asc und /tmp/labzeal-poc.MI7JgT/keyrings/labzeal-pubkey.asc
+     [5/5] Aktiviere signiertes lokales APT Repository...
+     ==========================================
+     Fertig! Signiertes Repository live auf file:/tmp/labzeal-poc.MI7JgT/www/
+     Teste es mit:
+       sudo apt install labzeal-all -y
+       Oder ueber Ansible: ansible-playbook ansible/deploy_labzeal.yml
+     ==========================================
+--- Repo-Inhalt:
+     InRelease
+     Packages
+     Packages.gz
+     Release
+     Release.gpg
+     debs
+     labzeal-pubkey.asc
+--- Client-Quelle (/tmp/labzeal-poc.MI7JgT/sparts/labzeal.sources):
+     Types: deb
+     URIs: file:/tmp/labzeal-poc.MI7JgT/www/
+     Suites: /
+     Components:
+     Signed-By: /tmp/labzeal-poc.MI7JgT/keyrings/labzeal-pubkey.asc
+     Enabled: yes
+PASS: InRelease vorhanden
+PASS: Release.gpg vorhanden
+PASS: Packages.gz vorhanden
+PASS: Public Key im Keyring
+PASS: kein 'Trusted: yes' in sources
+
+==> Client-Seite: apt gegen signiertes file://-Repo...
+PASS: T1: apt-get update akzeptiert signiertes Repo
+     Get:1 file:/tmp/labzeal-poc.MI7JgT/www  InRelease [1.952 B]
+PASS: T2: labzeal-all mit Abhaengigkeiten (labzeal, docset) aufloesbar und geladen
+     0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
+     Get:1 file:/tmp/labzeal-poc.MI7JgT/www  labzeal-all 1.0.0 [678 B]
+     Download complete and in download only mode
+
+==> Manipulations- und Signaturtests...
+dpkg-scanpackages: warning: Packages in archive but missing from override file:
+dpkg-scanpackages: warning:   labzeal labzeal-all labzeal-docset-python-3
+dpkg-scanpackages: info: Wrote 3 entries to output Packages file.
+PASS: T3: manipulierte Paketliste wird abgewiesen (Hash-Mismatch)
+       Hash Sum mismatch
+     E: Failed to fetch file:/tmp/labzeal-poc.MI7JgT/www/Packages.gz  Hash Sum mismatch
+PASS: T4: unsigniertes Repo wird abgewiesen
+     E: The repository 'file:/tmp/labzeal-poc.MI7JgT/www  Release' is not signed.
+dpkg-scanpackages: warning: Packages in archive but missing from override file:
+dpkg-scanpackages: warning:   labzeal labzeal-all labzeal-docset-python-3
+dpkg-scanpackages: info: Wrote 3 entries to output Packages file.
+PASS: T5: falscher Public Key wird abgewiesen (Signed-By wirkt)
+       The following signatures couldn't be verified because the public key is not available: NO_PUBKEY D0B798A371F348B8
+     W: OpenPGP signature verification failed: file:/tmp/labzeal-poc.MI7JgT/www  InRelease: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY D0B798A371F348B8
+PASS: T6: gpg --verify InRelease (Good signature)
+     gpg: Good signature from "LabZeal Repository <labzeal-repo@labzeal.local>" [ultimate]
+
+==> Ansible-Playbook (ansible-core in venv)...
+PASS: T7: ansible-playbook --syntax-check
+     PLAY RECAP *********************************************************************
+     localhost                  : ok=4    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+     
+PASS: T8a: Playbook legt Public Key ab
+PASS: T8b: Playbook schreibt signierte Quelle (Signed-By)
+PASS: T8c: keine Trusted-yes-Quelle
+
+==========================================
+Ergebnis: PASS=16 FAIL=0
+Log: /tmp/labzeal-poc.MI7JgT/poc_test.log

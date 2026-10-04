@@ -1,0 +1,10 @@
+Package: labzeal
+Version: 1.0.0
+Section: devel
+Priority: optional
+Architecture: amd64
+Depends: libc6, libstdc++6, libqt6core6, libqt6gui6, libqt6widgets6, libqt6webenginewidgets6, libqt6network6, libqt6svg6
+Maintainer: Alexander Tieber <jungewas40@gmail.com>
+Description: LabZeal Core Application (Qt6)
+ Modifizierte Zeal Version fuer Laboreinsatz.
+ Shared Path forced to /usr/share/labzeal/docsets.

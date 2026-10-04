@@ -100,7 +100,7 @@ QString stripParameterUrl(const QString &url, const QString &scheme)
 CommandLineParameters parseCommandLine(const QStringList &arguments)
 {
     QCommandLineParser parser;
-    parser.setApplicationDescription(QObject::tr("Zeal - Offline documentation browser."));
+    parser.setApplicationDescription(QObject::tr("LabZeal - Offline documentation browser."));
     parser.addHelpOption();
     parser.addVersionOption();
 
@@ -208,10 +208,10 @@ int main(int argc, char *argv[])
     // Do not allow Qt version lower than the app was compiled with.
     QT_REQUIRE_VERSION(argc, argv, QT_VERSION_STR)
 
-    QCoreApplication::setApplicationName(QStringLiteral("Zeal"));
+    QCoreApplication::setApplicationName(QStringLiteral("LabZeal"));
     QCoreApplication::setApplicationVersion(ZEAL_VERSION);
-    QCoreApplication::setOrganizationDomain(QStringLiteral("zealdocs.org"));
-    QCoreApplication::setOrganizationName(QStringLiteral("Zeal"));
+    QCoreApplication::setOrganizationDomain(QStringLiteral("labzeal.local"));
+    QCoreApplication::setOrganizationName(QStringLiteral("LabZeal"));
 
     // Handle --version (and --attach-console) before creating QApplication to avoid
     // initializing the platform/graphics stack just to print a version string.

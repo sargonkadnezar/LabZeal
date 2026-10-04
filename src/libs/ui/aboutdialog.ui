@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>About Zeal</string>
+    <string>About LabZeal</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -41,7 +41,7 @@
         <item>
          <widget class="QLabel" name="nameLabel">
           <property name="text">
-           <string>&lt;h1&gt;Zeal&lt;/h1&gt;</string>
+            <string>&lt;h1&gt;LabZeal&lt;/h1&gt;</string>
           </property>
          </widget>
         </item>

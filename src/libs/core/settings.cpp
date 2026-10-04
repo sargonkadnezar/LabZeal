@@ -130,18 +130,14 @@ void Settings::load()
 
     // TODO: Put everything in groups
     startMinimized = settings->value(QStringLiteral("start_minimized"), false).toBool();
-#ifdef ZEAL_FEATURE_UPDATE_CHECK
-    checkForUpdate = settings->value(QStringLiteral("check_for_update"), true).toBool();
-#else
-    checkForUpdate = settings->value(QStringLiteral("check_for_update"), false).toBool();
-#endif
+    checkForUpdate = false;
 
     showSystrayIcon = settings->value(QStringLiteral("show_systray_icon"), true).toBool();
     minimizeToSystray = settings->value(QStringLiteral("minimize_to_systray"), false).toBool();
     hideOnClose = settings->value(QStringLiteral("hide_on_close"), false).toBool();
 
     settings->beginGroup(GroupUI);
-    hideMenuBar = settings->value(QStringLiteral("hide_menu_bar"), false).toBool();
+    hideMenuBar = false; // LabZeal lockdown: menu bar always visible.
     hideSidebar = settings->value(QStringLiteral("hide_sidebar"), false).toBool();
     settings->endGroup();
 
@@ -251,15 +247,7 @@ void Settings::load()
     settings->endGroup();
 
     settings->beginGroup(GroupDocsets);
-    if (settings->contains(QStringLiteral("path"))) {
-        docsetPath = settings->value(QStringLiteral("path")).toString();
-    } else {
-#ifndef PORTABLE_BUILD
-        docsetPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + QLatin1String("/docsets");
-#else
-        docsetPath = QStringLiteral("docsets");
-#endif
-    }
+    docsetPath = QStringLiteral("/usr/share/labzeal/docsets");
     settings->endGroup();
 
     // Create the docset storage directory if it doesn't exist.

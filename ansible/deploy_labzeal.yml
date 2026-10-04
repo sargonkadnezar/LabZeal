@@ -1,0 +1,57 @@
+---
+# deploy_labzeal.yml
+# Proof of Concept: LabZeal-Client mit signiertem APT-Repository einrichten.
+# Standard: PoC auf localhost (connection: local).
+# Testlauf gegen eine VM oder das Schulnetz (siehe ansible/TESTRUN.md):
+#   ansible-playbook -i ansible/inventory.ini ansible/deploy_labzeal.yml \
+#     -e labzeal_hosts=clients -e labzeal_connection=ssh \
+#     -e labzeal_repo_uri=http://<server-ip>/labzeal/ \
+#     -e labzeal_pubkey_url=http://<server-ip>/labzeal/labzeal-pubkey.asc
+- name: LabZeal Client einrichten (PoC)
+  hosts: "{{ labzeal_hosts | default('localhost') }}"
+  connection: "{{ labzeal_connection | default('local') }}"
+  become: "{{ labzeal_become | default(true) }}"
+
+  vars:
+    labzeal_repo_uri: "http://127.0.0.1/labzeal/"
+    labzeal_pubkey_url: "http://127.0.0.1/labzeal/labzeal-pubkey.asc"
+    labzeal_pubkey_path: "/etc/apt/keyrings/labzeal-pubkey.asc"
+    labzeal_sources_path: "/etc/apt/sources.list.d/labzeal.sources"
+
+  tasks:
+    - name: Oeffentlichen GPG-Schluessel des Repositories laden
+      ansible.builtin.get_url:
+        url: "{{ labzeal_pubkey_url }}"
+        dest: "{{ labzeal_pubkey_path }}"
+        mode: "0644"
+      tags: [key]
+
+    - name: Alte .list-Quelle entfernen
+      ansible.builtin.file:
+        path: /etc/apt/sources.list.d/labzeal.list
+        state: absent
+      tags: [source]
+
+    - name: Signierte APT-Quelle eintragen (deb822, Signed-By)
+      ansible.builtin.copy:
+        dest: "{{ labzeal_sources_path }}"
+        mode: "0644"
+        content: |
+          Types: deb
+          URIs: {{ labzeal_repo_uri }}
+          Suites: /
+          Components:
+          Signed-By: {{ labzeal_pubkey_path }}
+          Enabled: yes
+      tags: [source]
+
+    - name: Paketlisten aktualisieren
+      ansible.builtin.apt:
+        update_cache: true
+      tags: [install]
+
+    - name: Meta-Paket labzeal-all installieren
+      ansible.builtin.apt:
+        name: labzeal-all
+        state: latest
+      tags: [install]

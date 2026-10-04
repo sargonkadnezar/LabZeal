@@ -257,7 +257,7 @@ void Application::applySettings()
 
 QString Application::userAgent()
 {
-    return QStringLiteral("Zeal/%1").arg(QCoreApplication::applicationVersion());
+    return QStringLiteral("LabZeal/%1").arg(QCoreApplication::applicationVersion());
 }
 
 QString Application::userAgentJson() const
